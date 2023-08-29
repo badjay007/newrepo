@@ -1,0 +1,30 @@
+[root@yball1r015do03 mapper]# oracleasm configure -i
+Configuring the Oracle ASM library driver.
+
+This will configure the on-boot properties of the Oracle ASM library
+driver.  The following questions will determine whether the driver is
+loaded on boot and what permissions it will have.  The current values
+will be shown in brackets ('[]').  Hitting <ENTER> without typing an
+answer will keep that current value.  Ctrl-C will abort.
+
+Default user to own the driver interface []: grid
+Default group to own the driver interface []: oinstall
+Start Oracle ASM library driver on boot (y/n) [n]: y
+Scan for Oracle ASM disks on boot (y/n) [y]: y
+Writing Oracle ASM library driver configuration: done
+[root@yball1r015do03 mapper]#
+[root@yball1r015do03 mapper]#
+[grid@yball1r015do03 grid]$
+[grid@yball1r015do03 grid]$ cd /dev/oracleasm/disks
+[grid@yball1r015do03 disks]$
+[grid@yball1r015do03 disks]$ ls -lrth
+total 0
+brw-------. 1 root root 253, 35 Jul 14 21:17 OCRVOTE_00
+[grid@yball1r015do03 disks]$
+
+[root@yball1r015do03 mapper]#
+[root@yball1r015do03 mapper]#
+[root@yball1r015do03 mapper]# oracleasm createdisk OCRVOTE_01 /dev/mapper/mpatho
+Writing disk header: done
+Instantiating disk: done
+[root@yball1r015do03 mapper]#
