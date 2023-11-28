@@ -1,36 +1,41 @@
 # UCD Server Information
-$ucdServerUrl = "https://<UCD_SERVER_URL>"
-$username = "<YOUR_USERNAME>"
-$password = "<YOUR_PASSWORD>"
- 
-# Application and Process Information
-$applicationName = "<APPLICATION_NAME>"
-$applicationProcessId = "<APPLICATION_PROCESS_ID>"
-$environmentName = "<ENVIRONMENT_NAME>"
- 
+$ucdServerHostname = "hostname-or-ip-address"
+$ucdServerUrl = "https://$ucdServerHostname:8443"
+$username = "admin"
+$password = "admin"
+
 # Bypass SSL/TLS Certificate Validation (for testing purposes)
 [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
- 
+
 # API Endpoint
 $apiEndpoint = "$ucdServerUrl/cli/applicationProcessRequest/request"
- 
+
 # Convert username and password to base64
 $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("${username}:${password}")))
- 
-# JSON Payload
-$jsonPayload = @{
-    "application" = $applicationName
-    "applicationProcess" = $applicationProcessId
-    "environment" = $environmentName
-    "onlyChanged" = "false"
-} | ConvertTo-Json
- 
+
+# New JSON Payload
+$jsonPayload = '{
+  "application": "Install-Uninstall-Agents_Update_Promethean_Status",
+  "applicationProcess": "Update_Promethean_Status",
+  "environment": "deploy",
+  "onlyChanged": "false",
+  "versions": [{
+    "version": "v1",
+    "component": "Install-Uninstall-Agents"
+  }],
+  "properties": {
+    "ipAddress": "${p:ipAddress}",
+    "SourceID": "${p:SourceID}",
+    "hostname": "${p:hostname}"
+  }
+}'
+
 # Make the API Request with Basic Authentication
 $response = Invoke-RestMethod -Uri $apiEndpoint -Method Post -Headers @{
     "Content-Type" = "application/json"
     "Authorization" = "Basic $base64AuthInfo"
 } -Body $jsonPayload
- 
+
 # Check the response
 if ($response.status -eq "OK") {
     Write-Host "Application process triggered successfully."
